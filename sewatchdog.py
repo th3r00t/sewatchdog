@@ -18,6 +18,7 @@ from pathlib import PureWindowsPath, Path
 import configparser
 import asyncio
 import os
+import signal
 from unicodedata import name
 
 config = {}
@@ -64,11 +65,18 @@ class Server:
         self.getcanary()
 
     async def watchdog(self):
-        while True:
+        _watcher = True
+        while _watcher:
             last_stamp = self.last_stamp
             await asyncio.sleep(10)
             self.getcanary()
-            print(self.last_stamp - last_stamp)
+            if self.last_stamp - last_stamp < 19:
+                pass
+            else:
+                print(self.last_stamp - last_stamp)
+
+    def die(self):
+        os.kill(self.pid, signal.SIGTERM)
 
     def __str__(self):
         return self.name
@@ -102,6 +110,7 @@ async def main():
             instances[server] = Server(server, config[server])
             await instances[server].watchdog()
             await asyncio.sleep(.2)
+        instances[server].processes()
     await asyncio.sleep(.2)
 
 if __name__ == "__main__":
