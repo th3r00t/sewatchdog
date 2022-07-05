@@ -120,7 +120,6 @@ async def main():
             instances[server] = Server(server, config[server])
             await instances[server].watchdog()
             await asyncio.sleep(.2)
-        instances[server].processes()
     await asyncio.sleep(.2)
 
 if __name__ == "__main__":
