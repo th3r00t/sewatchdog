@@ -19,6 +19,8 @@ import configparser
 import asyncio
 import os
 import signal
+import subprocess
+import time
 from unicodedata import name
 
 config = {}
@@ -59,8 +61,9 @@ def getconfig():
 class Server:
     def __init__(self, name, path):
         self.name = name
-        self.path = path
-        self.pid = self.getpid(self.path)
+        self.instance_path = path
+        self.server_path = (PureWindowsPath(self.instance_path).parent)
+        self.pid = self.getpid(self.instance_path)
         self.last_stamp = None
         self.getcanary()
 
@@ -72,18 +75,25 @@ class Server:
             self.getcanary()
             if self.last_stamp - last_stamp < 19:
                 pass
+            elif self.last_stamp - last_stamp > 60:
+                self.die()
+                time.sleep(5)
+                self.spawn()
             else:
                 print(self.last_stamp - last_stamp)
 
     def die(self):
         os.kill(self.pid, signal.SIGTERM)
 
+    def spawn(self):
+        subprocess.Popen(self.server_path+'Torch.Server.exe', close_fds=True, creationflags=subprocess.DETACHED_PROCESS)
+
     def __str__(self):
         return self.name
 
     def getcanary(self):
         try:
-            _fp = self.path.replace('"', '')+'canary'
+            _fp = self.instance_path.replace('"', '')+'canary'
             self.last_stamp = os.stat(_fp).st_mtime
             with open(_fp, 'r') as _canary:
                 return _canary.readline()
