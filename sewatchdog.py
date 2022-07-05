@@ -77,12 +77,12 @@ class Server:
             self.getcanary()
             if self.last_stamp - last_stamp < 19:
                 pass
-            elif self.last_stamp - last_stamp > 60:
+            elif self.last_stamp - last_stamp >= 50:
                 self.die()
                 time.sleep(5)
                 self.spawn()
             else:
-                print(self.last_stamp - last_stamp)
+                print(r"Pulse: {} seconds".format(round(self.last_stamp - last_stamp, 2)))
 
     def die(self):
         os.kill(self.pid, signal.SIGTERM)
@@ -98,7 +98,9 @@ class Server:
             _fp = self.instance_path.replace('"', '')+'canary'
             self.last_stamp = os.stat(_fp).st_mtime
             with open(_fp, 'r') as _canary:
-                return _canary.readline()
+                pulse = _canary.readline()
+                _canary.close()
+            return pulse
         except Exception as e:
             print(e)
             return False
@@ -126,3 +128,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+    print("Goodbye")
