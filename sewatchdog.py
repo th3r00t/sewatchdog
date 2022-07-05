@@ -18,6 +18,7 @@ from pathlib import PureWindowsPath, Path
 import configparser
 import asyncio
 import os
+import sys
 import signal
 import subprocess
 import time
@@ -36,7 +37,7 @@ def mkconfig():
             _fparser.write(_cfile)
             _cfile.flush()
             _cfile.close()
-        return True
+        sys.exit()
     except Exception as e:
         print(e)
         return False
