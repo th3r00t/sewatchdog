@@ -37,6 +37,7 @@ def mkconfig():
             _fparser.write(_cfile)
             _cfile.flush()
             _cfile.close()
+        print("Please adjust sewatchdog.ini accordingly")
         sys.exit()
     except Exception as e:
         print(e)
