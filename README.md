@@ -4,7 +4,7 @@
 
 Just run the included file and the config file will autogenerate for you.
 
-Adjust the config file to point to your servers installation directory,
+Adjust the config file to point to your servers **Instance** directory,
 and Make sure you disable any other torch watchdog plugins!
 
 sewatchdog will wait 1 minute before determining that the torch instance
