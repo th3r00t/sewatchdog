@@ -79,7 +79,7 @@ class Server:
                 print('Waiting for Game Ready')
                 time.sleep(60)
             elif self.last_stamp - last_stamp == 0:
-                if time.time() - self.last_stamp - last_stamp >= 60:
+                if time.time() - self.last_stamp >= 60:
                     print(self.last_stamp - last_stamp)
                     print(r'Killing Server {}'.format(time.time()))
                     self.die()
@@ -87,7 +87,6 @@ class Server:
                     self.spawn()
             elif self.last_stamp - last_stamp != 0:
                 print(r'{} pulse rcvd {}'.format(self.last_stamp - last_stamp, time.time()))
-            el
 
     def die(self):
         print('Killing Server')
