@@ -64,36 +64,39 @@ class Server:
     def __init__(self, name, path):
         self.name = name
         self.instance_path = path
-        self.server_path = (PureWindowsPath(self.instance_path).parent)
+        self.server_path = self.instance_path+'../'
         self.pid = self.getpid(self.instance_path)
         self.last_stamp = None
         self.getcanary()
 
-    async def watchdog(self):
-        _watcher = True
-        while _watcher:
-            last_stamp = self.last_stamp
-            await asyncio.sleep(10)
-            self.getcanary()
-            if self.last_stamp - last_stamp < 19:
-                pass
-            elif self.last_stamp - last_stamp >= 50:
-                self.die()
-                time.sleep(5)
-                self.spawn()
-                self.sleep(120)
-            else:
-                print(r"Pulse: {} seconds".format(round(self.last_stamp - last_stamp, 2)))
+    def watchdog(self):
+            _watcher = True
+            while _watcher:
+                last_stamp = self.last_stamp
+                time.sleep(20)
+                self.getcanary()
+                if last_stamp is None:
+                    print('Waiting for Game Ready')
+                    time.sleep(10)
+                elif self.last_stamp - last_stamp != 0:
+                    print(r'{} pulse rcvd {}'.format(self.last_stamp - last_stamp, time.time()))
+                else:
+                    print(self.last_stamp - last_stamp)
+                    print(r'Killing Server {}'.format(time.time()))
+                    self.die()
+                    time.sleep(5)
+                    self.spawn()
 
     def die(self):
         print('Killing Server')
-        os.system(r"taskkill /f /pid {}".format(self.pid))
+        os.system("taskkill /f /im Testing.Server.exe")
+        self.pid = None
+        self.last_stamp = None
 
     def spawn(self):
         print("Launching Server")
-        self.pid = None
-        self.last_stamp = None
-        subprocess.Popen(self.server_path+'Torch.Server.exe', close_fds=True, creationflags=subprocess.DETACHED_PROCESS)
+        _server_path = Path(self.server_path, 'Testing.Server.exe').__str__()
+        subprocess.Popen(_server_path, close_fds=True, creationflags=subprocess.DETACHED_PROCESS)
 
     def __str__(self):
         return self.name
