@@ -1,4 +1,5 @@
 # sewatchdog
+![Alt text](./screencap.gif?raw=true "Cerberus")
 ## Requires 
 > https://torchapi.com/plugins/view/ccfc7807-5691-4cbb-b6e5-f4cb00035ef5
 
