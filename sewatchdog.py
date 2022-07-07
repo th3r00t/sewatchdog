@@ -1,6 +1,6 @@
 # Space Engineers Watchdog 
 # Copyright (C) 2022  Raelon "th3r00t" Masters
-# 
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -30,8 +30,11 @@ instances = {}
 def mkconfig():
     try:
         _fparser = configparser.ConfigParser()
-        _fparser["instances"] = {
-            "servername": "/path/to/server"
+        _fparser["instance"] = {
+            "servername": "/path/to/server/Instance",
+        }
+        _fparser["server_executable"] = {
+            "exe": "Torch.Server.exe"
         }
         with open (r'./sewatchdog.ini', 'w') as _cfile:
             _fparser.write(_cfile)
@@ -54,6 +57,8 @@ def getconfig():
         _fparser.read('./sewatchdog.ini')
         for instance in _fparser["instances"]:
             _instances[instance] = _fparser["instances"][instance]
+        for exe in _fparser["server_executable"]:
+            _instances[exe] = _fparser["server_executable"][exe]
         return _instances
     except Exception as e:
         print(e)
@@ -61,11 +66,12 @@ def getconfig():
 
 
 class Server:
-    def __init__(self, name, path):
+    def __init__(self, name, path, executable):
         self.name = name
         self.instance_path = path
         self.server_path = self.instance_path+'../'
         self.pid = self.getpid(self.instance_path)
+        self.exe = executable
         self.last_stamp = None
         self.getcanary()
 
@@ -95,7 +101,7 @@ class Server:
 
     def spawn(self):
         print("Launching Server")
-        _server_path = Path(self.server_path, 'Testing.Server.exe').__str__()
+        _server_path = Path(self.server_path, self.exe).__str__()
         subprocess.Popen(_server_path, close_fds=True, creationflags=subprocess.DETACHED_PROCESS)
 
     def __str__(self):
