@@ -81,13 +81,18 @@ class Server:
                 self.die()
                 time.sleep(5)
                 self.spawn()
+                self.sleep(120)
             else:
                 print(r"Pulse: {} seconds".format(round(self.last_stamp - last_stamp, 2)))
 
     def die(self):
-        os.kill(self.pid, signal.SIGTERM)
+        print('Killing Server')
+        os.system(r"taskkill /f /pid {}".format(self.pid))
 
     def spawn(self):
+        print("Launching Server")
+        self.pid = None
+        self.last_stamp = None
         subprocess.Popen(self.server_path+'Torch.Server.exe', close_fds=True, creationflags=subprocess.DETACHED_PROCESS)
 
     def __str__(self):
