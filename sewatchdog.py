@@ -70,22 +70,24 @@ class Server:
         self.getcanary()
 
     def watchdog(self):
-            _watcher = True
-            while _watcher:
-                last_stamp = self.last_stamp
-                time.sleep(20)
-                self.getcanary()
-                if last_stamp is None:
-                    print('Waiting for Game Ready')
-                    time.sleep(10)
-                elif self.last_stamp - last_stamp != 0:
-                    print(r'{} pulse rcvd {}'.format(self.last_stamp - last_stamp, time.time()))
-                else:
-                    print(self.last_stamp - last_stamp)
-                    print(r'Killing Server {}'.format(time.time()))
-                    self.die()
-                    time.sleep(5)
-                    self.spawn()
+        _watcher = True
+        while _watcher:
+            last_stamp = self.last_stamp
+            time.sleep(20)
+            self.getcanary()
+            if last_stamp is None:
+                print('Waiting for Game Ready')
+                time.sleep(60)
+            elif self.last_stamp - last_stamp != 0:
+                print(r'{} pulse rcvd {}'.format(self.last_stamp - last_stamp, time.time()))
+            elif self.last_stamp - last_stamp >=1 & self.last_stamp - last_stamp < 60:
+                print(r'{} pulse rcvd {}'.format(self.last_stamp - last_stamp, time.time()))
+            else:
+                print(self.last_stamp - last_stamp)
+                print(r'Killing Server {}'.format(time.time()))
+                self.die()
+                time.sleep(5)
+                self.spawn()
 
     def die(self):
         print('Killing Server')
