@@ -25,18 +25,15 @@ import time
 from unicodedata import name
 
 config = {}
-instances = {}
 
 def mkconfig():
     try:
         _fparser = configparser.ConfigParser()
         _fparser["instance"] = {
-            "servername": "/path/to/server/Instance",
-        }
-        _fparser["server_executable"] = {
+            "path": "/path/to/server/Instance/",
             "exe": "Torch.Server.exe"
         }
-        with open (r'./sewatchdog.ini', 'w') as _cfile:
+        with open(r'./sewatchdog.ini', 'w') as _cfile:
             _fparser.write(_cfile)
             _cfile.flush()
             _cfile.close()
@@ -52,26 +49,23 @@ def getconfig():
             print("Error during config file generation")
             return False
     try:
-        _instances = {}
         _fparser = configparser.ConfigParser()
         _fparser.read('./sewatchdog.ini')
-        for instance in _fparser["instances"]:
-            _instances[instance] = _fparser["instances"][instance]
-        for exe in _fparser["server_executable"]:
-            _instances[exe] = _fparser["server_executable"][exe]
-        return _instances
+        return [_fparser['instance']['path'], _fparser['instance']['exe']]
     except Exception as e:
         print(e)
         return False
 
 
 class Server:
-    def __init__(self, name, path, executable):
-        self.name = name
-        self.instance_path = path
+    global config
+
+    def __init__(self):
+        self.name = config[1]
+        self.instance_path = config[0]
         self.server_path = self.instance_path+'../'
         self.pid = self.getpid(self.instance_path)
-        self.exe = executable
+        self.exe = config[1]
         self.last_stamp = None
         self.getcanary()
 
@@ -129,15 +123,13 @@ class Server:
             return False
 
 async def main():
-    global instances, config
+    global config
+    print('sewatchdog: initializing systems')
     config = getconfig()
-    for server in config:
-        try:
-            instances[server]
-        except KeyError:
-            instances[server] = Server(server, config[server])
-            await instances[server].watchdog()
-            await asyncio.sleep(.2)
+    print('sewatchdog: got configuration')
+    server = Server()
+    print('sewatchdog: initializing watchdog')
+    await server.watchdog()
     await asyncio.sleep(.2)
 
 if __name__ == "__main__":
