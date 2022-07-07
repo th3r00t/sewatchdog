@@ -80,9 +80,9 @@ class Server:
                 time.sleep(60)
             elif self.last_stamp - last_stamp != 0:
                 print(r'{} pulse rcvd {}'.format(self.last_stamp - last_stamp, time.time()))
-            elif self.last_stamp - last_stamp >= 1.0 and self.last_stamp - last_stamp < 60.0:
+            elif self.last_stamp - last_stamp > 0 and self.last_stamp - last_stamp <= 60.0:
                 print(r'{} pulse rcvd {}'.format(self.last_stamp - last_stamp, time.time()))
-            else:
+            elif self.last_stamp - last_stamp >= 60:
                 print(self.last_stamp - last_stamp)
                 print(r'Killing Server {}'.format(time.time()))
                 self.die()
