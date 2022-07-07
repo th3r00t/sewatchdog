@@ -85,6 +85,8 @@ class Server:
                     self.die()
                     time.sleep(5)
                     self.spawn()
+                else:
+                    print(r'{} since last heartbeat'.format(time.time() - self.last_stamp))
             elif self.last_stamp - last_stamp != 0:
                 print(r'{} pulse rcvd {}'.format(self.last_stamp - last_stamp, time.time()))
 
