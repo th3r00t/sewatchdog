@@ -80,7 +80,7 @@ class Server:
                 time.sleep(60)
             elif self.last_stamp - last_stamp != 0:
                 print(r'{} pulse rcvd {}'.format(self.last_stamp - last_stamp, time.time()))
-            elif self.last_stamp - last_stamp >= 1.0 & self.last_stamp - last_stamp < 60.0:
+            elif self.last_stamp - last_stamp >= 1.0 and self.last_stamp - last_stamp < 60.0:
                 print(r'{} pulse rcvd {}'.format(self.last_stamp - last_stamp, time.time()))
             else:
                 print(self.last_stamp - last_stamp)
