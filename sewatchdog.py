@@ -1,4 +1,4 @@
-# Space Engineers Watchdog 
+# Space Engineers Watchdog
 # Copyright (C) 2022  Raelon "th3r00t" Masters
 #
 # This program is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@ from unicodedata import name
 
 config = {}
 
+
 def mkconfig():
     try:
         _fparser = configparser.ConfigParser()
@@ -42,6 +43,7 @@ def mkconfig():
     except Exception as e:
         print(e)
         return False
+
 
 def getconfig():
     if not Path("./sewatchdog.ini").is_file():
@@ -79,16 +81,18 @@ class Server:
                 print('Waiting for Game Ready')
                 time.sleep(60)
             elif self.last_stamp - last_stamp == 0:
-                if time.time() - self.last_stamp >= 60:
+                if time.time() - self.last_stamp >= 120:
                     print(self.last_stamp - last_stamp)
                     print(r'Killing Server {}'.format(time.time()))
                     self.die()
                     time.sleep(5)
                     self.spawn()
                 else:
-                    print(r'{} since last heartbeat'.format(time.time() - self.last_stamp))
+                    print(r'{} since last heartbeat'.format(
+                        time.time() - self.last_stamp))
             elif self.last_stamp - last_stamp != 0:
-                print(r'{} pulse rcvd {}'.format(self.last_stamp - last_stamp, time.time()))
+                print(r'{} pulse rcvd {}'.format(
+                    self.last_stamp - last_stamp, time.time()))
 
     def die(self):
         print('Killing Server')
@@ -99,7 +103,8 @@ class Server:
     def spawn(self):
         print("Launching Server")
         _server_path = Path(self.server_path, self.exe).__str__()
-        subprocess.Popen(_server_path, close_fds=True, creationflags=subprocess.DETACHED_PROCESS)
+        subprocess.Popen(_server_path, close_fds=True,
+                         creationflags=subprocess.DETACHED_PROCESS)
 
     def __str__(self):
         return self.name
@@ -124,6 +129,7 @@ class Server:
         except FileNotFoundError as e:
             print(e)
             return False
+
 
 async def main():
     global config
