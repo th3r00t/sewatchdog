@@ -32,7 +32,8 @@ def mkconfig():
         _fparser = configparser.ConfigParser()
         _fparser["instance"] = {
             "path": "/path/to/server/Instance/",
-            "exe": "Torch.Server.exe"
+            "exe": "Torch.Server.exe",
+            "timeout": 60
         }
         with open(r'./sewatchdog.ini', 'w') as _cfile:
             _fparser.write(_cfile)
@@ -53,7 +54,9 @@ def getconfig():
     try:
         _fparser = configparser.ConfigParser()
         _fparser.read('./sewatchdog.ini')
-        return [_fparser['instance']['path'], _fparser['instance']['exe']]
+        return [_fparser['instance']['path'],
+                _fparser['instance']['exe'],
+                _fparser['instance']['timeout']]
     except Exception as e:
         print(e)
         return False
@@ -81,7 +84,7 @@ class Server:
                 print('Waiting for Game Ready')
                 time.sleep(60)
             elif self.last_stamp - last_stamp == 0:
-                if time.time() - self.last_stamp >= 120:
+                if time.time() - self.last_stamp >= config[2]:
                     print(self.last_stamp - last_stamp)
                     print(r'Killing Server {}'.format(time.time()))
                     self.die()
